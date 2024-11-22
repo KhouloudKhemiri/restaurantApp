@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Management</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <!-- SweetAlert2 CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.1.3/dist/sweetalert2.min.css">
+</head>
+<body>
+    <div class="container mt-5">
+        <h2>User Management</h2>
+
+        <!-- Button to show the add user form -->
+        <button class="btn btn-success mb-4" id="addNewUserBtn">Add New User</button>
+
+        <!-- Add/Edit User Form -->
+        <div id="addEditUserForm" style="display:none;">
+            <h4>{% if user_to_edit %}Edit{% else %}Add New{% endif %} User</h4>
+            <form method="POST">
+                <input type="hidden" name="action" value="{% if user_to_edit %}update{% else %}add{% endif %}">
+                {% if user_to_edit %}
+                <input type="hidden" name="user_id" value="{{ user_to_edit[0] }}">
+                {% endif %}
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" class="form-control" id="username" name="username" required value="{{ user_to_edit[1] if user_to_edit else '' }}">
+                </div>
+                <div class="form-group">
+                    <label for="first_name">First Name</label>
+                    <input type="text" class="form-control" id="first_name" name="first_name" required value="{{ user_to_edit[2] if user_to_edit else '' }}">
+                </div>
+                <div class="form-group">
+                    <label for="last_name">Last Name</label>
+                    <input type="text" class="form-control" id="last_name" name="last_name" required value="{{ user_to_edit[3] if user_to_edit else '' }}">
+                </div>
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" class="form-control" id="email" name="email" required value="{{ user_to_edit[4] if user_to_edit else '' }}">
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" class="form-control" id="password" name="password" required value="{{ user_to_edit[5] if user_to_edit else '' }}">
+                </div>
+                <button type="submit" class="btn btn-primary">{% if user_to_edit %}Update{% else %}Add{% endif %} User</button>
+            </form>
+        </div>
+
+        <h4>Existing Users</h4>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Username</th>
+                    <th>First Name</th>
+                    <th>Last Name</th>
+                    <th>Email</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in users %}
+                <tr>
+                    <td>{{ user[0] }}</td>
+                    <td>{{ user[1] }}</td>
+                    <td>{{ user[2] }}</td>
+                    <td>{{ user[3] }}</td>
+                    <td>{{ user[4] }}</td>
+                    <td>
+                        <!-- Modify Form -->
+                        <a href="{{ url_for('admin_users', user_id=user[0]) }}" class="btn btn-warning">Modify</a>
+
+                        <!-- Delete Form -->
+<form method="POST" class="d-inline" id="deleteForm{{ user[0] }}" onsubmit="return false;">
+    <input type="hidden" name="action" value="delete">
+    <input type="hidden" name="user_id" value="{{ user[0] }}">
+    <button type="button" class="btn btn-danger" data-user-id="{{ user[0] }}" onclick="confirmDelete(this)">Delete</button>
+</form>
+                    </td>
+                </tr>
+                {% endfor %}
+                <!-- Button to show the Add New User form -->
+                <tr>
+                    <td colspan="6">
+                        <button class="btn btn-success" id="addNewUserBtn">Add New User</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- SweetAlert2 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.1.3/dist/sweetalert2.min.js"></script>
+
+    <script>
+        // Show the Add/Edit User form
+        document.getElementById("addNewUserBtn").onclick = function() {
+            document.getElementById("addEditUserForm").style.display = 'block';  // Show form
+            document.getElementById("addNewUserBtn").style.display = 'none';  // Hide the "Add New User" button
+        }
+
+        // Function to confirm deletion of a user
+        function confirmDelete(button) {
+    var userId = button.getAttribute('data-user-id');
+    
+    Swal.fire({
+        title: 'Are you sure?',
+        text: "You won't be able to revert this!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Yes, delete it!',
+        cancelButtonText: 'No, keep it'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // Ici, vous envoyez la requête de suppression avec userId
+            // Par exemple, vous pouvez envoyer un formulaire ou faire une requête AJAX
+            document.getElementById('deleteForm' + userId).submit();
+            Swal.fire('Deleted!', 'The user has been deleted.', 'success');
+        }
+    });
+}
+
+    </script>
+</body>
+</html>

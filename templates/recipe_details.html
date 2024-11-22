@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ recipe['title'] }} - Recipe Details</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container mt-5">
+        <h2>{{ recipe['title'] }}</h2>
+
+        <!-- Affichage de l'image de la recette -->
+        <img class="img-fluid" src="{{ recipe['image'] }}" alt="Image of {{ recipe['title'] }}">
+
+        <h4>Ingredients</h4>
+        <ul>
+            {% for ingredient in recipe['extendedIngredients'] %}
+                <li>{{ ingredient['original'] }}</li>
+            {% endfor %}
+        </ul>
+
+        <h4>Instructions</h4>
+        <p>{{ recipe['instructions'] }}</p>
+
+        <a href="{{ recipe['sourceUrl'] }}" target="_blank" class="btn btn-primary">Full Recipe on Source</a>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
